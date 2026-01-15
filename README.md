@@ -1,2 +1,1 @@
-# DAT-373-Project-2-Work
-Exploring a data set which explored crime statistics in storms with the Miami Dade county.
+Used orginally an excel sheet which was sorted through and cleaned to then be used for analysis within the project. The core focus was to see which kinds of weather events produced the most crime and which areas were higher impact. The visual created within the scripts were to show the loss of victims and how much it climbs from the 2 years the data set presented to us. The notebook for the project was within a VM my school used which is no longer available so only my scripts are included in a text file.
