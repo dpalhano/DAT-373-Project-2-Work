@@ -1,0 +1,67 @@
+install.packages("tframe");
+install.packages("tfplot");
+library(tframe);
+library(tfplot);
+
+setwd("C:/Users/Public/Desktop/DAT-375") 
+
+crimestormdataQ <- read.csv("crimeStormQ.csv")
+print(crimestormdataQ)
+
+crimenostormdataQ <- read.csv("crimenostormQ.csv")
+print(crimenostormdataQ)
+
+
+z<-ts(cumsum(crimestormdataQ$Loss)/1000,start=c(2017,1), frequency=12)
+x<-ts(cumsum(crimenostormdataQ$Loss)/1000,start=c(2017,1), frequency=12)
+
+tfplot(list(z, x),
+       ylab = "Victim Loss in K$",
+       xlab = "By Month by Year",
+       main = "Victim Loss From Crimes for Jan 2017 - Dec 2019",
+       subtitle = "Cumulative Loss in Thousands of Dollars",
+       legend = c("Crimes During Storms (black)", "Crimes When No Storms (red)"),
+       source = "Source: DAT Data",
+       col = c("black", "red"))
+
+
+
+Work around 
+
+
+install.packages("ggplot2");
+install.packages("dplyr");
+library(ggplot2)
+library(dplyr)
+
+
+crimestormdataQ <- read.csv("crimeStormQ.csv")
+crimenostormdataQ <- read.csv("crimenostormQ.csv")
+
+crimestormdataQ$Date <- seq(as.Date("2017-01-01"), by = "month", length.out = nrow(crimestormdataQ))
+crimenostormdataQ$Date <- seq(as.Date("2017-01-01"), by = "month", length.out = nrow(crimenostormdataQ))
+
+crimestormdataQ$StormStatus <- "Storm"
+crimenostormdataQ$StormStatus <- "No Storm"
+
+
+combined_data <- bind_rows(
+  crimestormdataQ[, c("Date", "Loss", "StormStatus")],
+  crimenostormdataQ[, c("Date", "Loss", "StormStatus")])
+
+combined_data <- combined_data %>%
+  group_by(StormStatus) %>%
+  arrange(Date) %>%
+  mutate(CumLoss = cumsum(Loss) / 1000)
+
+
+ggplot(combined_data, aes(x = Date, y = CumLoss, color = StormStatus)) +
+  geom_line(size = 1.2) +
+   labs(
+    title = "Victim Loss From Crimes for Jan 2017 - Dec 2019",
+    subtitle = "Cumulative Loss in Thousands of Dollars",
+    x = "By Month by Year",
+    y = "Victim Loss (K$)",
+    color = "Crime Condition"
+  ) +
+  theme_minimal()
